@@ -42,7 +42,7 @@ public:
     Node* next;
     Node(): val(T(0)), left(nullptr), right(nullptr), next(nullptr) {}
     Node(T x): val(x), left(nullptr), right(nullptr), next(nullptr) {}
-    Node(T x, TreeNode* L, TreeNode* R): val(x), left(L), right(R), next(nullptr){}
+    Node(T x, TreeNode* L, TreeNode* R, TreeNode* N): val(x), left(L), right(R), next(N){}
 };
 
 template <typename T>
@@ -77,7 +77,7 @@ private:
 
 class TraversalSolution{
 public:
-    // Problem 144: preorderTraversal
+    // Problem 144, 509: preorderTraversal
     vector<int> preorderTraversalR(TreeNode<int>* root){
         vector<int> result;
         preorder(root, result);
@@ -104,7 +104,7 @@ public:
         return result;
     }
 
-    // Problem 145: postorderTraversal
+    // Problem 145. 590: postorderTraversal
     vector<int> postorderTraversalR(TreeNode<int>* root){
         vector<int> result;
         postorder(root, result);
@@ -259,28 +259,86 @@ public:
         return result;
     }
 
-    // TODO: Problem 116,117: find next node
+    // Problem 116,117: find next node
     Node<int>* connect(Node<int>* root) {
+        queue<Node<int>*> q;
+        if(root) q.push(root);
+        while(!q.empty()){
+            int size = q.size();
+            Node<int>* nodePre = q.front();
+            Node<int>* node;
+            for(int i=0; i<size; i++){
+                node = q.front();
+                q.pop();
+                if (nodePre != node) nodePre->next = node;
+                if (i == size-1) node->next = nullptr;
+                
+                if(node->left) q.push(node->left);
+                if(node->right) q.push(node->right);
+                nodePre = node;
+            }
+        }
+        return root;
+    }
+    Node<int>* connect2(Node<int>* root) {
         queue<Node<int>*> q;
         if(root) q.push(root);
         while(!q.empty()){
             int size = q.size();
             Node<int>* nodePre;
             Node<int>* node;
-            
             for(int i=0; i<size; i++){
-                nodePre = q.front();
-                q.pop();
-                if (size==1) nodePre->next = nullptr;
-                else{
-                    
-                    if(node->left) q.push(node->left);
-                    if(node->right) q.push(node->right);
+                if (i==0){
+                    nodePre = q.front();
+                    q.pop();
+                    node = nodePre;
+                } else{
+                    node = q.front();
+                    q.pop();
+                    nodePre->next = node;
+                    nodePre = node;
                 }
+                if(node->left) q.push(node->left);
+                if(node->right) q.push(node->right);
             }
-            //result.push_back(max);
+            node->next = nullptr;
         }
-        return cur;
+        return root;
+    }
+
+    // Problem 104,111: maxDepth,minDepth
+    int maxDepth(TreeNode<int>* root) {
+        queue<TreeNode<int>*> q;
+        int depth = 0;
+        if (root) q.push(root);
+        while(!q.empty()){
+            int size = q.size();
+            depth++;
+            for(int i=0; i<size; i++){
+                TreeNode<int>* node = q.front();
+                q.pop();
+                if(node->left) q.push(node->left);
+                if(node->right) q.push(node->right);
+            }
+        }
+        return depth;
+    }
+    int minDepth(TreeNode<int>* root){
+        queue<TreeNode<int>*> q;
+        int depth = 0;
+        if (root) q.push(root);
+        while(!q.empty()){
+            int size = q.size();
+            depth++;
+            for(int i=0; i<size; i++){
+                TreeNode<int>* node = q.front();
+                q.pop();
+                if(node->left == nullptr && node->right == nullptr) return depth;
+                if(node->left) q.push(node->left);
+                if(node->right) q.push(node->right);
+            }
+        }
+        return depth;
     }
 };
 

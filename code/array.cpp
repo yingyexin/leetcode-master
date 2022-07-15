@@ -1,0 +1,475 @@
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <stack>
+#include <queue>
+#include <limits>
+#include <set>
+
+using namespace std;
+
+class Solution {
+public:
+    // Problem 704E: binary search in ordered array
+    int search1(vector<int>& nums, int target) {
+        int left = 0, right = nums.size()-1;
+        int middle;
+        while(left <= right){
+            int middle = left + ((right - left) / 2);
+            if (nums[middle] < target)  {
+                left = middle+1;
+            }
+            else if (nums[middle] > target)  {
+                right = middle-1;
+            }
+            else return middle;
+        }
+        return -1;
+    }
+    int search2(vector<int>& nums, int target) {
+        int left = 0, right = nums.size();
+        int middle;
+        while(left < right){
+            int middle = left + ((right - left) / 2);
+            if (nums[middle] < target)  {
+                left = middle+1;
+            }
+            else if (nums[middle] > target)  {
+                right = middle;
+            }
+            else return middle;
+        }
+        return -1;
+    }
+
+    // Problem 35E
+    int searchInsert(vector<int>& nums, int target) {
+        int left = 0, right = nums.size()-1;
+        int middle;
+        while(left <= right){
+            middle = left + (right-left)/2;
+            if (nums[middle] > target)  right = middle-1;
+            else if (nums[middle] < target) left = middle+1;
+            else return middle;
+        }
+        // 分别处理如下四种情况
+        // 目标值在数组所有元素之前  [0, -1]
+        // 目标值等于数组中某一个元素  return middle;
+        // 目标值插入数组中的位置 [left, right]，return  right + 1
+        // 目标值在数组所有元素之后的情况 [left, right]， 因为是右闭区间，所以 return right + 1
+        return right+1;// return left
+    }
+
+    // Problem 34M: search and range (duplicate array)
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> range;
+        int leftBorder = searchLeftBorder(nums, target);
+        int rightBorder = searchRightBorder(nums, target);
+        if (leftBorder!=-1 && nums[leftBorder] == target) //TODO:(note) empty vector
+            range.push_back(leftBorder);
+        else    
+            range.push_back(-1);
+        if(rightBorder!=-3 && nums[rightBorder] == target)   
+            range.push_back(rightBorder);
+        else    
+            range.push_back(-1);
+        return range;
+        /*if (leftBorder==-1 || rightBorder==-3)  return {-1,-1};
+        if (rightBorder - leftBorder >= 0)  return {leftBorder, rightBorder};
+        else return {-1,-1};*/
+    }
+    int searchRightBorder(vector<int>& nums, int target){
+        int left = 0, right = nums.size()-1;
+        int middle, Rborder = -2;
+        while(left<=right){
+            middle = left + (right-left)/2;
+            if (nums[middle] > target)
+                right = middle-1;
+            else {
+                left = middle+1;
+                Rborder = left;
+            }      
+        }
+        return Rborder-1;
+    }
+    int searchLeftBorder(vector<int>& nums, int target){
+        int left = 0, right = nums.size()-1;
+        int middle, Lborder = -2;
+        while(left<=right){
+            middle = left + (right-left)/2;
+            if (nums[middle] >= target) {
+                right = middle-1;
+                Lborder = right;
+            }
+            else left = middle+1;      
+        }
+        return Lborder+1;
+    }
+
+    // Problem 69E
+    int mySqrt(int x) {
+        int left = 0, right = x;
+        int middle;
+        while(left <= right){
+            middle = left + (right-left)/2;
+            if ((long long) middle*middle > x)  right = middle-1;
+            else if (middle*middle < x) left = middle+1;
+            else return middle;
+        }
+        return right;
+    }
+    
+    // Problem 367E
+    bool isPerfectSquare(int num) {
+        int left = 0, right = num;
+        int middle;
+        while(left <= right){
+            middle = left + (right-left)/2;
+            if ((long long) middle*middle > num)  right = middle-1;
+            else if (middle*middle < num) left = middle+1;
+            else return true;
+        }
+        return false;
+    }
+
+    // Problem 27E
+    int removeElement(vector<int>& nums, int val) {
+        /*int slowIndex = 0;
+        for (int fastIndex=0; fastIndex < nums.size(); fastIndex++){
+            if (val != nums[fastIndex])
+                nums[slowIndex++] = nums[fastIndex];
+        }
+        return slowIndex;*/
+        int left = 0, right = nums.size();
+        while(left<right){
+            if (nums[left]==val){
+                nums[left] = nums[right-1];
+                right--;
+            }
+            else    
+                left++;
+        }
+        return left;
+    }
+
+    // Problem 26E
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.size() == 0) //TODO: note empty vector
+            return 0;
+        int slow = 0;
+        for (int fast=1; fast<nums.size(); ){
+            if (nums[fast] == nums[slow]){
+                fast++;
+            } else
+                nums[++slow] = nums[fast];
+        }
+        return slow+1;
+    }
+
+    // Problem 283E
+    void moveZeroes(vector<int>& nums) {
+        /*int slow=0;
+        for (int fast=0; fast<nums.size(); fast++){
+            if(fast==slow && nums[fast]!=0)
+                slow++;
+            else if(fast!=slow && nums[fast]!=0){
+                nums[slow++] = nums[fast];
+                nums[fast] = 0;
+            }
+        }*/
+        int n = nums.size(), left = 0, right = 0;
+        while (right < n) {
+            if (nums[right]) {
+                swap(nums[left], nums[right]);
+                left++;
+            }
+            right++;
+        }
+    }
+
+    // Problem 844E
+    bool backspaceCompare(string s, string t) {
+        int left_s = 0, left_t=0, right_s = 0, right_t=0;
+        while(right_s<s.size()){
+            if(s[right_s]!='#'){
+                s[left_s] = s[right_s];
+                left_s++;
+            }else{
+                left_s--;
+                if(left_s<0)    left_s=0;
+            }
+            right_s++;
+        }
+        while(right_t<t.size()){
+            if(t[right_t]!='#'){
+                t[left_t] = t[right_t];
+                left_t++;
+            }else{
+                left_t--;
+                if(left_t<0)    left_t=0;
+            }
+            right_t++;
+        }
+        if (s.substr(0, left_s)==t.substr(0, left_t))   return true;
+        else return false;
+    }
+
+    // Problem 977E
+    vector<int> sortedSquares(vector<int>& nums) {
+        int left=0, right=nums.size()-1;
+        vector<int> result(nums.size()); // TODO: note:initialize a vector size
+        int k=right;
+        while(left <= right){
+            if((long long)nums[left]*nums[left] > (long long)nums[right]*nums[right]){
+                result[k--]=nums[left]*nums[left];
+                left++;
+            } else {
+                result[k--]=nums[right]*nums[right];
+                right--;
+            }
+        }
+        return result;
+    }
+
+    // Problem 209M
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int left = 0;
+        int res=nums.size()+1, sublen=0;
+        int sum=0;
+        for(int right=0; right<nums.size(); right++){
+            sum += nums[right];
+            
+            while(sum>=target){
+                sublen = right - left + 1;
+                res = res < sublen ? res : sublen;
+                sum -= nums[left];
+                left++;
+            }
+        }
+        res = res > nums.size() ? 0 : res;
+        return res;
+    }
+
+    // TODO:Problem 904M hash table
+    int totalFruit(vector<int>& fruits) {
+        int right=0, subsize=0, res=0;
+        set<int> basket;
+        int left=0;
+        while(right < fruits.size()){
+            subsize++;
+            basket.insert(fruits[right]);
+            right++;
+            cout << basket.size() << " ";
+
+            if(basket.size()>2){
+                subsize--;
+                basket.erase(fruits[left]);
+                ++left;    
+            }
+            res = res<subsize ? subsize : res;
+        }
+        return res;
+    }
+
+    // TODO:Problem 76D
+    string minWindow(string s, string t) {
+
+    }
+
+    // Problem 59M
+    vector<vector<int>> generateMatrix(int n) {
+        int startx = 0, starty = 0, offset = 1;
+        int end = 1;
+        int mid = n/2;
+        int i, j;
+        vector<vector<int>>  res(n, vector<int>(n, 0)); //TODO: note initialize vector
+        while(end <= n*n){
+            i = startx;
+            j = starty;
+
+            for (j=starty; j<n-offset; j++)
+                res[startx][j] = end++;
+            
+            for(i=startx; i<n-offset; i++)
+                res[i][j] = end++;
+            
+            for(; j>starty; j--)
+                res[i][j] = end++;
+            
+            for(; i>startx; i--)
+                res[i][j] = end++;
+            
+            startx++;
+            starty++;
+            offset++;
+
+            if(n%2==1 && end == n*n)
+                res[mid][mid] = end++;
+        }
+        return res;
+    }
+    
+    vector<vector<int>> generateMatrix2(int n) {
+        vector<vector<int>> matrix(n, vector<int>(n,0));
+        int start=1;
+        int left=0, right=n-1, top=0, bottom=n-1;
+        while(left<=right && top<=bottom){
+            for(int j=left; j<=right; j++)
+                matrix[top][j] = start++;
+            
+            for(int i=top+1; i<=bottom; i++)
+                matrix[i][right] = start++;
+            
+            if (left < right && top < bottom){
+                for(int j=right-1; j>left; j--)
+                    matrix[bottom][j] = start++;
+                
+                for(int i=bottom; i>top; i--)
+                    matrix[i][left] = start++;
+            }
+            left++;
+            right--;
+            top++;
+            bottom--;
+        }
+        return matrix;
+    
+    }
+    // Problem 54M / O29E
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+       
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return {};
+        }
+        int m = matrix.size(); // =3, 
+        int n = matrix[0].size(); // =4
+        vector<int> order;
+        int left = 0, right = n - 1, top = 0, bottom = m - 1;
+        while (left <= right && top <= bottom) {
+            for (int j = left; j < right; j++) {
+                order.push_back(matrix[top][j]);
+            }
+            for (int i = top; i < bottom; i++) {
+                order.push_back(matrix[i][right]);
+            }
+            if (top < bottom && left < right){
+                for (int j = right; j > left; j--) {
+                    order.push_back(matrix[bottom][j]);
+                }
+                for (int i = bottom; i > top; i--) {
+                    order.push_back(matrix[i][left]);
+                }
+            }
+            else if (top == bottom ){
+                order.push_back(matrix[top][right]);
+            }
+            else if (right == left)
+                order.push_back(matrix[bottom][right]);
+            
+            left++;
+            right--;
+            top++;
+            bottom--;
+
+        }
+        return order;
+    }
+
+    vector<int> spiralOrder2(vector<vector<int>>& matrix) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return {};
+        }
+
+        int startx = 0, starty = 0, offset = 0;
+        int m = matrix.size(), n = matrix[0].size();
+        int i, j;
+        int count = 1;
+        vector<int> res;
+        while (count <= m*n){
+
+            for(j=starty; j<n-offset; j++){
+                if (res.size()>=m*n) break;
+                res.emplace_back(matrix[startx][j]);
+                count++;
+            }
+            for(i=startx; i<m-offset; i++){
+                if (res.size()>=m*n) break;
+                res.emplace_back(matrix[i][j]);
+                count++;
+            }
+            for(; j>starty; j--){
+                if (res.size()>=m*n) break;
+                res.emplace_back(matrix[i][j]);
+                count++;
+            }
+            for(; i>startx; i--){
+                if (res.size()>=m*n) break;
+                res.emplace_back(matrix[i][j]);
+                count++;
+            }
+
+            startx++;
+            starty++;
+            offset++;
+
+            if(m==n && m*n%2==1 && count == m*n){
+                int mid = m/2;
+                res.emplace_back(matrix[mid][mid]);
+            }
+        }
+        return res;
+    }
+
+    vector<int> spiralOrder3(vector<vector<int>>& matrix) { //TODO: gut!
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return {};
+        }
+        int m = matrix.size(); // =3, 
+        int n = matrix[0].size(); // =4
+        vector<int> order;
+        int left = 0, right = n - 1, top = 0, bottom = m - 1;
+        while (left <= right && top <= bottom) {
+            for (int j = left; j <= right; j++) { //TODO: note get all in the first two
+                order.push_back(matrix[top][j]);
+            }
+            for (int i = top; i <= bottom; i++) {
+                order.push_back(matrix[i][right]);
+            }
+            if (top < bottom && left < right){
+                for (int j = right; j > left; j--) {
+                    order.push_back(matrix[bottom][j]);
+                }
+                for (int i = bottom; i > top; i--) {
+                    order.push_back(matrix[i][left]);
+                }
+            }
+            
+            left++;
+            right--;
+            top++;
+            bottom--;
+        }
+    }
+
+};
+
+int main() {
+    //std::vector<int> num = {3,3,3,1,2,1,1,2,3,3,4};
+    vector<vector<int>> num1 = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
+    vector<vector<int>> num2 = {{1},{2},{3}};
+    int target;
+    
+    Solution sol;
+    //int res = sol.totalFruit(num);
+    //cout << endl<< res <<endl;
+    vector<int> result1 = sol.spiralOrder(num1);
+    for (int i=0; i<result1.size();i++)
+        cout << " " << result1[i] ;
+    cout << endl;
+    
+    vector<int> result2 = sol.spiralOrder(num2);
+    for (int i=0; i<result2.size();i++)
+        cout << " " << result2[i] ;
+    
+    return 0;
+}
