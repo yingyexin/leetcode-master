@@ -101,6 +101,38 @@ private:
     queue<int> q2;
 };
 
+// 225E one queue
+class MyStack1 {
+public:
+    MyStack1() {
+    }
+    
+    void push(int x) {
+        q1.push(x);
+    }
+    
+    int pop() {
+        int size = q1.size()-1;
+        while(size--){
+            q1.push(q1.front());
+            q1.pop();
+        }
+        int res = q1.front();
+        q1.pop();
+        return res;
+    }
+    
+    int top() {
+        return q1.back();
+    }
+    
+    bool empty() {
+        return q1.empty();
+    }
+private:
+    queue<int> q1;
+};
+
 class Solution {
 public:
     // Problem 20E
