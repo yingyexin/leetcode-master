@@ -5,6 +5,8 @@
 #include <queue>
 #include <limits>
 #include <set>
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 
@@ -462,10 +464,13 @@ int main() {
     Solution sol;
     //int res = sol.totalFruit(num);
     //cout << endl<< res <<endl;
+    auto start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     vector<int> result1 = sol.spiralOrder(num1);
     for (int i=0; i<result1.size();i++)
         cout << " " << result1[i] ;
     cout << endl;
+    auto end_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    cout << "miliseconds: " << start_time.count() - end_time.count() << endl;
     
     vector<int> result2 = sol.spiralOrder(num2);
     for (int i=0; i<result2.size();i++)
