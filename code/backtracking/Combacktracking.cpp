@@ -1,0 +1,130 @@
+#include <iostream>
+#include <vector>
+#include <string.h>
+#include <algorithm> // sort
+using namespace std;
+
+class ComSolution {
+public:
+    // 77M
+    vector<vector<int>> combine(int n, int k) {
+        vector<int> path;
+        vector<vector<int>> res;
+        backtracking77(n, k, 1, path, res);
+        return res;
+    };
+    void backtracking77(int n, int k, int start, vector<int>& path, vector<vector<int>>& res){
+        if(path.size()==k){
+            res.push_back(path);
+            return;
+        }
+        for(int i=start; i<=n-(k-path.size())+1; i++){
+            path.push_back(i);
+            backtracking77(n, k, i+1, path, res);
+            path.pop_back();
+        }
+    }
+
+    // 216M
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<int> path;
+        vector<vector<int>> res;
+        backtracking216(n, k, 1, path, res);
+        return res;
+    };
+    void backtracking216(int n, int k, int start, vector<int>& path, vector<vector<int>>& res){
+        if(path.size()==k){
+            int sum = 0;
+            for(int j=0; j<k; j++){
+                sum += path[j];
+            }
+            if (sum==n)
+                res.push_back(path);
+            return;
+        }
+        for(int i=start; i<=9-(k-path.size())+1; i++){
+            path.push_back(i);
+            backtracking216(n, k, i+1, path, res);
+            path.pop_back();
+        }
+    }
+
+    // 17M
+    vector<string> letterCombinations(string digits) {
+        const string mapstr[10] = {
+            "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
+        }; // 0-9
+        string path;
+        vector<string> res;
+        vector<string> d;
+        for(int i=0; i<digits.size(); i++){
+            if(digits[i]-'0' < 2 || digits[i]-'0' > 9){
+                cout << "wrong digits input" << endl;
+                return res;
+            } else
+                d.push_back(mapstr[digits[i]-'0']);
+        }
+        backtracking17(d, 0, path, res);
+        return res;
+    }
+    void backtracking17(vector<string> d, int start, string& path, vector<string>& res){
+        if(path.size()==d.size()){            
+            res.push_back(path);
+            return;
+        }
+        for(int i=0; i<d[start].size(); i++){
+            path += d[start][i];
+            backtracking17(d, start+1, path, res);
+            path.pop_back();
+        }
+    }
+
+    // 39M
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<int> path;
+        vector<vector<int>> res;
+        int sum = 0;
+        sort(candidates.begin(), candidates.end());
+        backtracking39(candidates, target, 0, sum, path, res);
+        return res;
+    }
+    void backtracking39(vector<int> candidates, int target, int start, int& sum, vector<int>& path, vector<vector<int>>& res){
+        if(sum==target){
+            res.push_back(path);
+            return;
+        }
+        for(int i=start; i<candidates.size() && sum+candidates[i]<=target; i++){
+            sum += candidates[i];
+            path.push_back(candidates[i]);
+            backtracking39(candidates, target, i, sum, path, res);
+            sum -= candidates[i];
+            path.pop_back();
+        }
+    }
+
+    // 40M TODO:
+
+
+};
+void printVec(vector<vector<int>> res){
+    cout << "[" << endl;
+    for(int i=0; i<res.size(); i++){
+        cout << "[";
+        for(int j=0; j< res[0].size(); j++)
+            cout << res[i][j] << " ";
+        cout << "]" << endl;
+    }
+    cout << "]";
+}
+
+int main(){
+    // int n,k;
+    // cin >> n >> k;
+    ComSolution sol;
+    // printVec(sol.combine(n, k));
+    string digits;
+    cin >> digits;
+
+
+    return 0;
+}
