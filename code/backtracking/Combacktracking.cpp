@@ -96,13 +96,58 @@ public:
         for(int i=start; i<candidates.size() && sum+candidates[i]<=target; i++){
             sum += candidates[i];
             path.push_back(candidates[i]);
+            // for(auto num:path)
+            //     cout << num << " ";
+            // cout << "------" << i << endl;
             backtracking39(candidates, target, i, sum, path, res);
             sum -= candidates[i];
             path.pop_back();
         }
     }
 
-    // 40M TODO:
+    // 40M
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<int> path;
+        vector<bool> used(candidates.size(), false);
+        vector<vector<int>> res;
+        int sum = 0;
+        sort(candidates.begin(), candidates.end());
+        backtracking40(candidates, target, 0, sum, used, path, res);
+        //backtracking40b(candidates, target, 0, sum, path, res);
+        return res;
+    }
+    void backtracking40(vector<int> candidates, int target, int start, int& sum, vector<bool>& used, vector<int>& path, vector<vector<int>>& res){
+        if(sum==target){
+            res.push_back(path);
+            return;
+        }
+        for(int i=start; i<candidates.size() && sum+candidates[i]<=target; i++){
+            if(i>0 && candidates[i]==candidates[i-1] && !used[i-1])
+                continue;
+            sum += candidates[i];
+            path.push_back(candidates[i]);
+            used[i] = true;
+            backtracking40(candidates, target, i+1, sum, used, path, res);
+            used[i] = false;
+            sum -= candidates[i];
+            path.pop_back();
+        }
+    }
+    void backtracking40b(vector<int> candidates, int target, int start, int& sum, vector<int>& path, vector<vector<int>>& res){
+        if(sum==target){
+            res.push_back(path);
+            return;
+        }
+        for(int i=start; i<candidates.size() && sum+candidates[i]<=target; i++){
+            if(i>start && candidates[i]==candidates[i-1])
+                continue;
+            sum += candidates[i];
+            path.push_back(candidates[i]);
+            backtracking40b(candidates, target, i+1, sum, path, res);
+            sum -= candidates[i];
+            path.pop_back();
+        }
+    }
 
 
 };
@@ -122,9 +167,9 @@ int main(){
     // cin >> n >> k;
     ComSolution sol;
     // printVec(sol.combine(n, k));
-    string digits;
-    cin >> digits;
-
+    vector<int> vec = {2,5,3};
+    vector<vector<int>> res = sol.combinationSum(vec, 7);
+    
 
     return 0;
 }
