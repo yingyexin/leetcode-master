@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class Solution {
+class BinarySearch {
 public:
     // Problem 704E: binary search in ordered array
     int search1(vector<int>& nums, int target) {
@@ -133,7 +133,60 @@ public:
         }
         return false;
     }
+    
+    // Problem 74M or convert to one-dim
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m = matrix.size(), n = matrix[0].size();
+        vector<int> left{0,0};
+        vector<int> right{m-1, n-1};
+        while(left[0]*n+left[1] <= right[0]*n+right[1]){
+            vector<int> middle(2,0);
+            int inter = left[0]*n+left[1] + ((right[0]-left[0])*n+right[1]-left[1])/2;
+            middle[0] = inter/n;
+            middle[1] = inter%n;
+            // cout<<middle[0]<<" "<<middle[1]<< endl;
+            if(matrix[middle[0]][middle[1]]<target){
+                left[0] = middle[1]==n-1 ? middle[0]+1 : middle[0];
+                left[1] = middle[1]==n-1 ? 0 : middle[1]+1;
+            }
+            else if(matrix[middle[0]][middle[1]]>target){
+                right[0] = middle[1]==0 ? middle[0]-1 : middle[0];
+                right[1] = middle[1]==0 ? n-1 : middle[1]-1;
+            }
+            else return true;
+        }
+        return false;
+    }
+    
+    //Problem 33M rotated ordered array
+    int search(vector<int>& nums, int target) {
+        int n = (int)nums.size();
+        if (!n) {
+            return -1;
+        }
+        if (n == 1) {
+            return nums[0] == target ? 0 : -1;
+        }
+        int l = 0, r = n - 1;
+        while (l <= r) {
+            int mid = (l+r)/2;
+            if(nums[mid]==target) return mid;
+            if(nums[l]<=nums[mid]){
+                if(nums[l]<=target && target<=nums[mid]) r=mid;
+                else l=mid+1;
+            }else{
+                if(nums[mid]<=target && target<=nums[r]) l=mid;
+                else r=mid-1;
+            }
+        }
+        return -1;
+    }
+    
+    
+};
 
+Class RemoveElement_doublePointer{
+public:
     // Problem 27E
     int removeElement(vector<int>& nums, int val) {
         /*int slowIndex = 0;
@@ -232,8 +285,11 @@ public:
         }
         return result;
     }
+};
 
-    // Problem 209M
+Class SlidingWindow_min{
+public:  
+     // Problem 209M
     int minSubArrayLen(int target, vector<int>& nums) {
         int left = 0;
         int res=nums.size()+1, sublen=0;
@@ -277,7 +333,11 @@ public:
     string minWindow(string s, string t) {
 
     }
+    
+};
 
+Class ArrayBase{
+public:
     // Problem 59M
     vector<vector<int>> generateMatrix(int n) {
         int startx = 0, starty = 0, offset = 1;
@@ -452,7 +512,6 @@ public:
             bottom--;
         }
     }
-
 };
 
 int main() {
