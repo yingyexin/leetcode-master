@@ -201,7 +201,55 @@ public:
         }
         return false;
     }
+    // Problem 153M min of rotated ordered array
+    int findMin(vector<int>& nums) {
+        int n = (int)nums.size();
+        if (n == 1)
+            return nums[0];
+        
+        int l = 0, r = n - 1;
+        while (l < r) {
+            int mid = (l+r)/2;
+            if(nums[mid]<nums[r])
+                r=mid;
+            else
+                l=mid+1;
+        }
+        return nums[l];
+    }
     
+    // Problem 4D 
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int m = nums1.size(), n=nums2.size();
+        if((m+n)%2==1)
+            return getMedium(nums1, nums2, int((m+n)/2)+1);
+        else return (getMedium(nums1, nums2, int((m+n)/2)) + getMedium(nums1, nums2, int((m+n)/2)+1))/2.0;
+    }
+    int getMedium(vector<int> nums1, vector<int> nums2, int k){
+        if(k==1){
+            if(nums1.size()==0) return nums2[0];
+            else if(nums2.size()==0) return nums1[0];
+            return nums1[0]<nums2[0] ? nums1[0] : nums2[0];
+        }
+        int m=min<int>(int(k/2), nums1.size()), n=min<int>(int(k/2), nums2.size());
+        // if(n==0){
+        //     nums1.erase(nums1.begin(), nums1.begin()+m);
+        //     return getMedium(nums1, nums2, k-m);
+        // } else if(m==0){
+        //     nums2.erase(nums2.begin(), nums2.begin()+n);
+        //     return getMedium(nums1, nums2, k-n);
+        // }
+        if(n==0) return nums1[k-1];
+        else if (m==0) return nums2[k-1];
+
+        if(nums1[m-1] < nums2[n-1]){
+            nums1.erase(nums1.begin(), nums1.begin()+m);
+            return getMedium(nums1, nums2, k-m);
+        } else {
+            nums2.erase(nums2.begin(), nums2.begin()+n);
+            return getMedium(nums1, nums2, k-n);
+        }
+    }
 };
 
 Class RemoveElement_doublePointer{
