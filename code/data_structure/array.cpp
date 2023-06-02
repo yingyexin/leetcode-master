@@ -356,7 +356,7 @@ public:
 
 Class SlidingWindow_min{
 public:  
-     // Problem 209M
+    // Problem 209M
     int minSubArrayLen(int target, vector<int>& nums) {
         int left = 0;
         int res=nums.size()+1, sublen=0;
@@ -375,7 +375,7 @@ public:
         return res;
     }
 
-    // TODO:Problem 904M hash table
+    // Problem 904M max sliding window
     int totalFruit(vector<int>& fruits) {
         int right=0, subsize=0, res=0;
         set<int> basket;
@@ -392,6 +392,55 @@ public:
                 ++left;    
             }
             res = res<subsize ? subsize : res;
+        }
+        return res;
+    }
+    int totalFruit(vector<int>& fruits) {
+        set<int> tree;
+        map<int, int> nums;
+        int j=0, i=0;
+        int res=0;
+        while(j<fruits.size()){
+            nums[fruits[j]]++;
+            tree.insert(fruits[j]);
+            while(tree.size()>=3){
+                nums[fruits[i]]--;
+                if(nums[fruits[i]]==0)
+                    tree.erase(fruits[i]);
+                i++;
+            }
+            res = res>(j-i+1) ? res : j-i+1;
+            j++;
+        }
+        return res;
+    }
+    // Problem 3M 
+    int lengthOfLongestSubstring(string s) {
+        int i=0, j=0, res=0;
+        set<char> sset;
+        while(j<s.size()){
+            while(sset.count(s[j])>0){
+                sset.erase(s[i]);
+                i++;
+            }
+            sset.insert(s[j]);
+            res = max(res, j-i+1);
+            j++;
+        }
+        return res;
+    }
+    // Problem 1004M
+    int longestOnes(vector<int>& nums, int k) {
+        int i=0, j=0, res=0;
+        int zero=0;
+        while(j<nums.size()){
+            if(nums[j]==0) zero++;
+            while(zero>k){
+                if(nums[i]==0) zero--;
+                i++;
+            }
+            res = max(res, j-i+1);
+            j++;
         }
         return res;
     }
