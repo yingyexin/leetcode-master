@@ -131,7 +131,32 @@ public:
         }
         return nullptr;
     }
+    
+    // Problem 2M
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        return addTwo(l1, l2, 0);
+    }
+    ListNode* addTwo(ListNode* l1, ListNode* l2, bool flag){
+        int m=0, n=0;
+        if(!l1 && !l2) return flag ? new ListNode(1) : nullptr;
+        if(l2) n = l2->val;
+        if(l1) m = l1->val;
 
+        int num = 0;
+        if(flag){
+            num = m + n + 1;
+            flag = 0;
+        } else num = m + n;
+        if(num>9) flag = 1;
+
+        ListNode* l3 = new ListNode(num%10);
+        if(l1 && l2) l3->next = addTwo(l1->next, l2->next, flag);
+        else if(!l1) l3->next = addTwo(nullptr, l2->next, flag);
+        else if(!l2) l3->next = addTwo(l1->next, nullptr, flag);
+        return l3;        
+    }
+    
+    
 };
 
 
