@@ -217,7 +217,23 @@ public:
         }
         return res; 
     }
-
+    // Problem 128M O(n)
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> nset(nums.begin(), nums.end());
+        int longest=0, cur=0;
+        for(int i=0; i<nums.size(); i++){
+            if(!nset.count(nums[i]-1)){
+                int n = nums[i];
+                cur = 1;
+                while(nset.count(n+1)){
+                    cur++;
+                    n++;
+                }
+                longest = max(cur, longest);
+            }
+        }
+        return longest;
+    }
 
 };
 
