@@ -350,6 +350,35 @@ public:
 
         return root;
     }
+    TreeNode* trimBST(TreeNode* root, int low, int high) {
+        while(root && (root->val < low || root->val > high)){
+            if(root->val < low) root = root->right;
+            else root = root->left;
+        }
+        TreeNode* pre = root;
+        TreeNode* cur = root;
+        while(cur){
+            if(cur->val < low){
+                pre->left = cur->right ? cur->right : nullptr;
+                cur = cur->right;
+            }else{
+                pre = cur;
+                cur = cur->left;
+            }
+        }
+        pre = root;
+        cur = root;
+        while(cur){
+            if(cur->val > high){
+                pre->right = cur->left ? cur->left : nullptr;
+                cur = cur->left;
+            }else{
+                pre = cur;
+                cur = cur->right;
+            }
+        }
+        return root;
+    }
 
     // 538M
     TreeNode* convertBST(TreeNode* root) {
@@ -381,6 +410,20 @@ public:
             }
         }
         return root;
+    }
+    
+    // Problem 230M find Kth smallest
+    int count = 0;
+    int kthSmallest(TreeNode* root, int k) {
+        if(!root) return 0;
+        int left = kthSmallest(root->left, k);
+        count ++;
+        if(count==k) return root->val;
+
+        int right = kthSmallest(root->right, k);
+        // cout << root->val << " " << left << " " << right << endl;
+
+        return left!=0 ? left : right;
     }
 };
 
