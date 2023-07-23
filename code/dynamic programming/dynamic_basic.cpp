@@ -93,24 +93,21 @@ public:
 class BagSolution {
 public:
     // 416M
-    bool canPartition(vector<int>& nums) {
-        sort(nums.begin(), nums.end());
-        int left=0, right=nums.size()-1;
-        int suml=0, sumr=0;
-        while(left<right){
-            suml += nums[left];
-            sumr += nums[right];
-            if(suml<sumr)
-                left++;
-            else if(suml>sumr)
-                right++;
-            else if(suml==sumr && left!=right-1){
-                left++;
-                right++;
-            } else
-                return true;
-        }
-        return false;
+    bool canPartitiona(vector<int>& nums) {
+        int sum=0;
+        for(int num:nums)
+            sum += num;
+        if(sum%2==1) return false;
+        vector<bool> dp(sum/2+1, false);
+        dp[0]=true;
+        for(int j=0; j<=sum/2; j++)
+            if(j==nums[0])  dp[nums[0]]=true;
+        
+        for(int i=1; i<nums.size(); i++)
+            for(int j=sum/2; j>=nums[i]; j--)//j-weight[i]>=0
+                dp[j] = dp[j] || dp[j-nums[i]];
+                    
+        return dp[sum/2];
     }
     bool canPartitionb(vector<int>& nums){
         int sum=0;
@@ -118,28 +115,11 @@ public:
             sum += num;
         if(sum%2==1) return false;
         vector<int> dp(sum/2+1, 0);
-        //sort(nums.begin(), nums.end()); //i order no matters
         dp[0]=0;
         for(int i=0; i<nums.size(); i++)
             for(int j=sum/2; j>=nums[i]; j--)//j-weight[i]>=0
                 dp[j] = max(dp[j], dp[j-nums[i]]+nums[i]);
         if(dp[sum/2]==sum/2)
-            return true;
-        else return false;
-    }
-
-    //698M TODO: backtracking [2222345]
-    bool canPartitionKSubsets(vector<int>& nums, int k) {
-        int sum=0;
-        for(int num:nums)
-            sum += num;
-        if(sum%k==1) return false;
-        vector<int> dp(sum/k +1, 0);
-        dp[0] = 0;
-        for(int i=0; i<nums.size(); i++)
-            for(int j=sum/k; j>=nums[i]; j--)
-                dp[j] = max(dp[j], dp[j-nums[i]]+nums[i]);
-        if(dp[sum/k]==sum/k)
             return true;
         else return false;
     }
