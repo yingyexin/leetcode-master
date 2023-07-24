@@ -149,8 +149,48 @@ public:
         }
     }
 
-
 };
+class HardSolution{
+public:
+    // Problem 2305M
+    int ans = INT_MAX;
+    int distributeCookies(vector<int>& cookies, int k) {
+        sort(cookies.begin(), cookies.end(), std::greater());
+        vector<int> bucket(k, 0);
+       
+        backtrace(cookies, bucket, 0);
+        return ans;
+    }
+    void backtrace(vector<int>& nums, vector<int>& bucket, int idx){
+
+        if(idx==nums.size()){
+            int unfair = INT_MIN;
+            for(int num:bucket)
+                unfair = max(unfair, num);
+            ans = min(unfair, ans);
+            return;
+        }
+
+        int zero=0;
+        for(int num:bucket)
+            if(num==0) zero++;
+        if(zero>nums.size()-idx) return;
+
+        for(int i=0; i<bucket.size(); i++){
+            if(bucket[i]>ans) return;
+            
+            bucket[i] += nums[idx];
+            backtrace(nums, bucket, idx+1);
+            bucket[i] -= nums[idx];
+        }
+        return;
+    }
+
+
+
+}
+
+
 void printVec(vector<vector<int>> res){
     cout << "[" << endl;
     for(int i=0; i<res.size(); i++){
