@@ -1,0 +1,64 @@
+给定n, 
+输出全排列
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+class Solution{
+public:
+    vector<vector<int>> res;
+    vector<int> path;
+
+    void backtrace(int n, vector<bool>& used){
+        if(path.size()==n){
+            res.push_back(path);
+            return;
+        }
+        for(int i=1; i<=n; i++){
+            if(used[i-1]) continue;
+            path.push_back(i);
+            used[i-1] = true;
+            backtrace(n, used);
+            path.pop_back();
+            used[i-1] = false;
+        }
+        return;
+    }
+    vector<vector<int>> func(int n){
+        res.clear();
+        path.clear();
+        vector<bool> used(n, false);
+        backtrace(n, used);
+        return res;
+    }
+};
+
+
+camera frustrum, given depth(HW)
+HWDC(3),  (0-h-1, 0-w-1, 1-d)
+out put HWDC
+
+def to_homo(input, dim):
+
+    ones = torch.ones_like(input.select(dim, 0).unsqueeze(dim))
+    output = torch.cat([input, ones], dim=dim)
+    return output
+
+
+def func(K, frustrum, depth):
+
+    height, width, depth = frustrum.size
+    inv_K = torch.inverse(K) # 33
+
+    # x 0-h-1, y 0-w-1
+    xx, yy = torch.meshgrid(torch.arrange(width), torch.arrange(height), indexing='xy') 
+
+    pix_coord_2hw = torch.stack((xx, yy), axis = 0) +0.5
+    pix_coord_3N = to_homo(pix_coord_2hw, dim=0).flatten(1)
+
+    cam_point_3N = torch.matmul(inv_K, pix_coord_13N)
+    cam_point_3N = depth.flatten(start_dim=0) * cam_point_3N # depth [h,w,d]
+    
